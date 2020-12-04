@@ -3,10 +3,6 @@ package persistence;
 import java.sql.*;
 import java.util.ArrayList;
 
-/**
- *
- * @author sqlitetutorial.net
- */
 public class Connect {
 
     /*public static void createNewDatabase() {
@@ -53,6 +49,7 @@ public class Connect {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+
         return conn;
     }
 
@@ -70,6 +67,7 @@ public class Connect {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+
         return results;
     }
 
@@ -84,13 +82,5 @@ public class Connect {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-    }
-
-
-    public static void main(String[] args) throws SQLException {
-        //createNewDatabase();
-        //createNewTable();
-        //insert("5");
-        selectAll().forEach(System.out::println);
     }
 }
