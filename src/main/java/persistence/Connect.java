@@ -74,10 +74,10 @@ public class Connect {
         String sql = "INSERT INTO results(result) VALUES(?)";
         System.out.println("here");
         try (Connection conn = connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, result);
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setString(1, result);
             System.out.println("here");
-            pstmt.executeUpdate();
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
