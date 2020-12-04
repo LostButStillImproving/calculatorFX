@@ -46,7 +46,7 @@ public class Connect {
     }*/
     private static Connection connect() {
         // SQLite connection string
-        String url = "jdbc:sqlite:src/persistence/myDatabase.db";
+        String url = "jdbc:sqlite:src/main/java/persistence/myDatabase.db";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);

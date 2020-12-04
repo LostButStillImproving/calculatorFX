@@ -36,7 +36,6 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        equals.setStyle("-fx-background-color: #0000ff");
         ArrayList<String> resultsFromDB = Connect.selectAll();
         resultsFromDB.forEach(i -> previousResults.push(i));
     }
