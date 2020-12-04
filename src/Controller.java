@@ -1,14 +1,29 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import org.mariuszgromada.math.mxparser.*;
+import org.xml.sax.SAXException;
+import persistence.Connect;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.ResourceBundle;
+import java.util.Stack;
 
 
-
-public class Controller {
+public class Controller implements Initializable {
     private String lastResult = "";
     private Boolean resetField = false;
+    Stack<String> previousResults = new Stack<>();
+    Stack<String> forwardResults = new Stack<>();
+    String currentResult = "";
 
     @FXML Button sin;
     @FXML Button cos;
@@ -16,10 +31,51 @@ public class Controller {
     @FXML Button ln;
     @FXML Button log;
     @FXML Button sqrt;
+    @FXML Button equals;
     @FXML private TextArea inputArea;
 
-    @FXML
-    private void evaluateString() {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        equals.setStyle("-fx-background-color: #0000ff");
+        ArrayList<String> resultsFromDB = Connect.selectAll();
+        resultsFromDB.forEach(i -> previousResults.push(i));
+    }
+
+    @FXML private void back() {
+        if (previousResults.empty()) return;
+
+        this.forwardResults.push(this.currentResult);
+        this.currentResult = this.previousResults.pop();
+        inputArea.setText(this.currentResult);
+    }
+    @FXML private void forward() {
+        if (forwardResults.empty()) return;
+
+        this.previousResults.push(this.currentResult);
+        this.currentResult = forwardResults.pop();
+        inputArea.setText(this.currentResult);
+    }
+    private void addNewResult(String result) {
+        if (!this.currentResult.isEmpty()) {
+            this.previousResults.push(this.currentResult);
+        }
+        this.currentResult = result;
+        /// send til sqlite her
+        Connect.insert(result);
+
+    }
+
+    @FXML private void askWolfram() throws IOException, SAXException, ParserConfigurationException {
+        WolframAPI wolframAPI = new WolframAPI();
+        if (inputArea.getText().isEmpty()) return;
+        String result = wolframAPI.ask(inputArea.getText());
+        inputArea.setText(result);
+        lastResult = inputArea.getText();
+        addNewResult(result);
+        resetField = true;
+    }
+
+    @FXML private void evaluateString() {
         Expression e = new Expression(inputArea.getText());
 
         double result = e.calculate();
@@ -27,11 +83,14 @@ public class Controller {
 
         if (result > flooredResult) {
             inputArea.setText(String.valueOf(result));
+            addNewResult(String.valueOf(result));
             lastResult = String.valueOf(result);
         } else {
             inputArea.setText(String.valueOf(flooredResult));
+            addNewResult(String.valueOf(flooredResult));
             lastResult = String.valueOf(flooredResult);
         }
+        System.out.println(e.checkSyntax());
         resetField = true;
     }
 
