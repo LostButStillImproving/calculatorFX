@@ -72,11 +72,9 @@ public class Connect {
 
     public static void insert(String result) {
         String sql = "INSERT INTO results(result) VALUES(?)";
-        System.out.println("here");
         try (Connection conn = connect();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setString(1, result);
-            System.out.println("here");
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
